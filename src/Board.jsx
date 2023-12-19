@@ -1,7 +1,7 @@
 import {useState, useEffect, useCallback} from 'react';
 import {FaBomb, FaFlag} from "react-icons/fa";
 
-const MineBoard = ({size1: sizeX, size2: sizeY, numberOfMines, clickTrigger, winTrigger, loseTrigger}) => {
+const MineBoard = ({size1: sizeX, size2: sizeY, numberOfMines, clickTrigger, winTrigger, loseTrigger, minesLeftSetter}) => {
     const [grid, setGrid] = useState([]);
     const [isGameOver, setGameOver] = useState(false);
     const [isGameWon, setGameWon] = useState(false);
@@ -16,12 +16,11 @@ const MineBoard = ({size1: sizeX, size2: sizeY, numberOfMines, clickTrigger, win
             }))
         );
 
-        let newNumberOfMines = numberOfMines
-        if (newNumberOfMines > (sizeX * sizeY)) {
-            newNumberOfMines = sizeX * sizeY
+        if (numberOfMines > (sizeX * sizeY)) {
+            numberOfMines = sizeX * sizeY
         }
 
-        for (let i = 0; i < newNumberOfMines; i++) {
+        for (let i = 0; i < numberOfMines; i++) {
             let coordX = Math.floor(Math.random() * sizeX)
             let coordY = Math.floor(Math.random() * sizeY)
             do {
@@ -41,6 +40,7 @@ const MineBoard = ({size1: sizeX, size2: sizeY, numberOfMines, clickTrigger, win
                 }
             }
         }
+        minesLeftSetter(numberOfMines)
         setGrid(newGrid);
         setGameOver(false);
         setGameWon(false);
@@ -94,6 +94,17 @@ const MineBoard = ({size1: sizeX, size2: sizeY, numberOfMines, clickTrigger, win
         if (!currentCell.isOpen) {
             newGrid[row][col].isFlagged = !newGrid[row][col].isFlagged;
         }
+
+        let numberOfFlags= 0
+        grid.forEach((row)=>{
+            row.forEach((cell) =>{
+                if (cell.isFlagged){
+                    numberOfFlags++;
+                }
+            })
+        })
+
+        minesLeftSetter(numberOfMines-numberOfFlags)
 
         checkGameStatus(newGrid);
 

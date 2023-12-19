@@ -1,7 +1,7 @@
 import Board from './Board.jsx'
 import {useState} from "react";
 import {
-    Button, Modal,
+    Button, Chip, Modal,
     ModalBody,
     ModalContent,
     ModalFooter,
@@ -9,11 +9,13 @@ import {
     Slider,
     useDisclosure,
 } from "@nextui-org/react";
+import {FaBomb} from "react-icons/fa";
 
 function App() {
     const [sizeX, setSizeX] = useState(10)
     const [sizeY, setSizeY] = useState(10)
     const [numberOfMines, setNumberOfMines] = useState(10)
+    const [minesLeft, setMinesLeft] = useState(0)
     const [triggerRerender, setTriggerRerender] = useState(false)
     const {isOpen: isOpenWin, onOpen: onOpenWin, onOpenChange: onOpenChangeWin} = useDisclosure();
     const {isOpen: isOpenLose, onOpen: onOpenLose, onOpenChange: onOpenChangeLose} = useDisclosure();
@@ -72,6 +74,14 @@ function App() {
 
             <div className="p-3 inline-block w-full">
                 <div>
+                    <Chip
+                        endContent={<FaBomb />}
+                        variant="flat"
+                        color="default"
+                        className={`relative top-[50%] -translate-y-1/2`}
+                    >
+                        {minesLeft.toString().padStart(3, '0')}
+                    </Chip>
                     <Slider
                         size="lg"
                         step={1}
@@ -131,7 +141,7 @@ function App() {
                 </div>
 
                 <Board size1={sizeX} size2={sizeY} numberOfMines={numberOfMines} clickTrigger={triggerRerender}
-                       loseTrigger={lose} winTrigger={win}></Board>
+                       loseTrigger={lose} winTrigger={win} minesLeftSetter={setMinesLeft}></Board>
             </div>
         </>
     )
